@@ -1,65 +1,86 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { getBooks } from '@/lib/data';
+import { GridBookCard } from './components/BookCard';
 
-export default function Home() {
+// revalidate
+export const revalidate = 3600;
+
+export default async function HomePage() {
+  const books = await getBooks();
+  const featured = books.slice(0, 3);
+  const genres = [...new Set(books.map((b) => b.category))];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="min-h-screen bg-cream">
+      {/* Hero */}
+      <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
+        <p className="text-sm font-medium uppercase tracking-widest text-gold mb-4">
+          Curated Reading
+        </p>
+        <h1 className="font-playfair text-5xl md:text-6xl font-bold text-ink leading-tight">
+          Books that stay <br />
+          <span className="text-gold italic">with you.</span>
+        </h1>
+        <p className="mt-6 max-w-xl mx-auto text-ink/60 text-lg leading-relaxed">
+          A hand-picked collection across fiction, history, science, and ideas.
+          Find your next great read.
+        </p>
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <Link
+            href="/books"
+            className="px-6 py-3 bg-ink text-cream rounded-lg text-sm font-medium hover:bg-ink/80 transition-colors"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Browse All Books
+          </Link>
+          <Link
+            href="/books?category=Fiction"
+            className="px-6 py-3 border border-ink/20 text-ink rounded-lg text-sm font-medium hover:bg-ink/5 transition-colors"
           >
-            Documentation
-          </a>
+            Start with Fiction
+          </Link>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Genre pills */}
+      <section className="max-w-6xl mx-auto px-6 pb-10">
+        <div className="flex flex-wrap gap-2 justify-center">
+          {genres.map((genre) => (
+            <Link
+              key={`genre-${genre}`}
+              href={`/books?category=${genre}`}
+              className="px-4 py-1.5 rounded-full bg-white border border-ink/10 text-sm text-ink/70 hover:border-gold hover:text-gold transition-colors"
+            >
+              {genre}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Books */}
+      <section className="max-w-6xl mx-auto px-6 pb-24">
+        <div className="flex items-baseline justify-between mb-8">
+          <h2 className="font-playfair text-2xl font-semibold text-ink">
+            Featured Titles
+          </h2>
+          <Link
+            href="/books"
+            className="text-sm text-gold hover:underline underline-offset-2"
+          >
+            View all →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {featured.map((book) => (
+            <GridBookCard key={`featured-${book.slug}`} book={book} />
+          ))}
+        </div>
+      </section>
+
+      {/* Footer strip */}
+      <footer className="border-t border-ink/10 py-8 text-center text-sm text-ink/40">
+        © {new Date().getFullYear()} Lumen Books. All rights reserved.
+      </footer>
+    </main>
   );
 }
