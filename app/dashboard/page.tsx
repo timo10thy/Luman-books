@@ -8,8 +8,8 @@ export default async function DashboardPage() {
   const cookieStore = await cookies()
   const session = cookieStore.get(AUTH_COOKIE_NAME)
 
-  if (!session) {
-    redirect('/login')
+  if (!session || session.value !== process.env.AUTH_SECRET) {
+  redirect('/login')
   }
 
   

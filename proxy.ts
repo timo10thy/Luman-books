@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { AUTH_COOKIE_NAME } from '@/lib/auth'
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const session = request.cookies.get(AUTH_COOKIE_NAME)
 
-  if (!session) {
+  if (!session || session.value !== process.env.AUTH_SECRET) {
     const loginUrl = new URL('/login', request.url)
     return NextResponse.redirect(loginUrl)
   }
