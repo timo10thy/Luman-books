@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { getBooks } from '@/lib/data';
 import { GridBookCard } from './components/BookCard';
+import LiveSearch from './components/LiveSearch'
 
-// revalidate
 export const revalidate = 3600;
 
 export default async function HomePage() {
@@ -38,7 +38,14 @@ export default async function HomePage() {
           >
             Start with Fiction
           </Link>
+          
         </div>
+        
+        <div className="mt-8">
+          <LiveSearch />
+        </div>  
+
+
       </section>
 
       {/* Genre pills */}

@@ -95,3 +95,13 @@ export async function getBookBySlug(slug: string): Promise<Book | undefined> {
   await new Promise(r => setTimeout(r, 500))
   return books.find(book => book.slug === slug)
 }
+
+export async function addBook(book: Omit<Book, 'id'>): Promise<Book> {
+  await new Promise(r => setTimeout(r, 500))
+  const newBook: Book = {
+    ...book,
+    id: books.length + 1,
+  }
+  books.push(newBook)
+  return newBook
+}
